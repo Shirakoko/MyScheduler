@@ -7,7 +7,7 @@
 > 简而言之，就是：
 >
 > 1. sched本身不具备线程管理功能，需要把sched.run()放到子线程中执行。
-> 2. sched.run()是**阻塞式**的，在run的过程中如果重置了任务队列（sched.queue），不能重新run
+> 2. sched.run()是**阻塞式**的，在run的过程中如果重置了任务队列（sched.queue），不能重新run。
 > 3. 原因是原来已经在run了就会阻塞子线程（底层是time.sleep，阻塞式且不可中断）。
 
 ```python
@@ -172,4 +172,4 @@ def stop(self):
 
 ## 使用案例
 
-与业务模块紧耦合的schedule.py使用了该模块，使用案例在my_schedule.py中。
+与业务模块紧耦合的schedule.py使用了该模块，使用案例在[my_schedule.py](my_schedule.py)中。
