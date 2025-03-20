@@ -28,7 +28,8 @@ class MyScheduler:
         execute_time = time.time() + delay
         # 将任务和执行时间放入优先级队列
         self.task_queue.put((execute_time, task))
-        logging.info(f"任务已添加到队列，执行时间: {datetime.fromtimestamp(execute_time)}, 当前线程是否启动: {self.running}")
+        formatted_time = datetime.fromtimestamp(execute_time).strftime("%Y-%m-%d %H:%M:%S")
+        logging.info(f"任务已添加到队列，执行时间: {formatted_time}, 当前线程是否启动: {self.running}")
 
     def clear_tasks(self):
         """
@@ -76,6 +77,20 @@ class MyScheduler:
                         continue
             except Exception as e:
                 logging.error(f"任务执行出错: {e}")
+    
+    def get_next_task_time(self):
+        """
+        获取下一个任务的执行时间。
+
+        返回:
+            str: 下一个任务的执行时间字符串，如果队列为空则返回 "当前没有任务"。
+        """
+        if self.task_queue.empty():
+            return "当前没有任务"
+        else:
+            # 获取下一个任务的执行时间
+            execute_time, _ = self.task_queue.queue[0]
+            return datetime.fromtimestamp(execute_time).strftime("%Y-%m-%d %H:%M:%S")
 
     def start(self):
         """
@@ -84,9 +99,12 @@ class MyScheduler:
         if self.running:
             return
         self.running = True # 标志位设成True
-        self.task_thread = threading.Thread(target=self.__run_scheduler, daemon=True)
-        self.task_thread.start()
-        logging.info("调度器线程已启动")
+        next_task_time = self.get_next_task_time()  # 获取下个任务的执行时间
+        logging.info(f"调度器线程已启动，下个任务执行时间: {next_task_time}")
+        if self.task_thread is None or not self.task_thread.is_alive():
+            self.task_thread = threading.Thread(target=self.__run_scheduler, daemon=True)
+            self.task_thread.start()
+
 
     def stop(self):
         """
@@ -96,4 +114,4 @@ class MyScheduler:
             return
         self.running = False # 标志位设成False
         self.reset_event.set()  # 中断线程
-        logging.info("调度器线程任务已停止")
+        logging.info("调度器线程已停止")

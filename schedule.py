@@ -34,13 +34,13 @@ def enable_scheduler_and_update_status(enable=None):
                 # 如果任务已经过期，清空任务队列并重新安排任务
                 scheduler.clear_tasks()
                 __schedule_next_run()
-                scheduler.start()
+            
+            scheduler.start()
         else:
             scheduler.stop()
 
     if savior_window:
         savior_window.update_task_status_label(get_next_task_status())  # 更新界面文字
-    logging.info(f"定时任务已 {'启用' if enable else '禁用'}")
 
 def get_next_task_status():
     """
@@ -64,7 +64,7 @@ def get_next_task_status():
 
     # 格式化时间字符串
     next_run_str = next_run.strftime("%Y/%m/%d %H:%M")
-    return f"下次定时更新任务安排于 {next_run_str}，\n温馨提醒：拉取前请检查工作区是否有未shelve的变更~"
+    return f"下次定时更新任务安排于 {next_run_str}，拉取前请检查工作区是否有未shelve的变更~"
 
 def __sync_p4():
     """
