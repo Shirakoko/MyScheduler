@@ -72,6 +72,10 @@ while True:
    - **功能**：启动调度器线程。
 5. **`stop()`**
    - **功能**：停止调度器线程。
+6. **`get_next_task_time()`**
+   - **功能**：获取下一个任务的执行时间。
+   - 返回：
+     - `str`：下一个任务的执行时间字符串，格式为 "YYYY-MM-DD HH:MM:SS"，如果队列为空则返回 "当前没有任务"。
 
 ## 实现细节
 
@@ -167,7 +171,7 @@ def stop(self):
         return
     self.running = False # 标志位设成False
     self.reset_event.set()  # 中断线程
-    logging.info("调度器线程任务已停止")
+    logging.info("调度器线程已停止")
 ```
 
 ## 使用案例
