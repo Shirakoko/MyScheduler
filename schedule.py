@@ -126,7 +126,7 @@ def start_scheduler(savior_window_instance=None, sync_p4_time=None, kill_process
     # 安排第一次任务
     __schedule_next_run()
     # 启动定时任务线程
-    scheduler.start()
+    enable_scheduler_and_update_status(enable=ENABLE_SCHEDULER)
 
 
 def update_sync_time(hour, minute):
