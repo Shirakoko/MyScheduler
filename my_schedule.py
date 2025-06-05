@@ -29,7 +29,7 @@ class MyScheduler:
         # 将任务和执行时间放入优先级队列
         self.task_queue.put((execute_time, task))
         formatted_time = datetime.fromtimestamp(execute_time).strftime("%Y-%m-%d %H:%M:%S")
-        logging.info(f"任务已添加到队列，执行时间: {formatted_time}, 当前线程是否启动: {self.running}")
+        logging.info(f"MyScheduler.add_task: 任务已添加到队列，执行时间: {formatted_time}, 当前线程是否启动: {self.running}")
 
     def clear_tasks(self):
         """
@@ -37,7 +37,7 @@ class MyScheduler:
         """
         with self.task_queue.mutex:
             self.task_queue.queue.clear()
-        logging.info("任务队列已清空")
+        logging.info("MyScheduler.clear_tasks: 任务队列已清空")
 
     def reset(self):
         """
@@ -57,7 +57,6 @@ class MyScheduler:
                     if self.reset_event.wait(timeout=1):
                         # 如果 reset_event 被设置，需要重置调度器
                         self.reset_event.clear()
-                        logging.info("调度器被重置，重新安排任务")
                     continue
 
                 # 取出最早需要执行的任务
@@ -73,7 +72,6 @@ class MyScheduler:
                     if self.reset_event.wait(timeout=delay):
                         # 如果 reset_event 被设置，需要重置调度器
                         self.reset_event.clear()
-                        logging.info("调度器被重置，重新安排任务")
                         continue
             except Exception as e:
                 logging.error(f"任务执行出错: {e}")
@@ -100,7 +98,7 @@ class MyScheduler:
             return
         self.running = True # 标志位设成True
         next_task_time = self.get_next_task_time()  # 获取下个任务的执行时间
-        logging.info(f"调度器线程已启动，下个任务执行时间: {next_task_time}")
+        logging.info(f"MyScheduler.start: 调度器线程已启动，下个任务执行时间: {next_task_time}")
         if self.task_thread is None or not self.task_thread.is_alive():
             self.task_thread = threading.Thread(target=self.__run_scheduler, daemon=True)
             self.task_thread.start()
@@ -114,4 +112,4 @@ class MyScheduler:
             return
         self.running = False # 标志位设成False
         self.reset_event.set()  # 中断线程
-        logging.info("调度器线程已停止")
+        logging.info("MyScheduler.stop: 调度器线程已停止")
